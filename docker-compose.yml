@@ -1,9 +1,42 @@
-# Fichiers Python
-__pycache__/
-*.pyc
+services:
+  db:
+    image: mysql:8.0
+    container_name: mini-projet
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: projet_db
+      MYSQL_USER: projet_user
+      MYSQL_PASSWORD: projet_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
 
-# Environnement
-.env
+  app:
+    build: .
+    container_name: projet_app
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./src:/app/src
+      - ./scripts:/app/scripts
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: projet_db
+      DB_USER: projet_user
+      DB_PASSWORD: projet_pass
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
 
-# Sorties
-output/
+volumes:
+  mysql_data:
