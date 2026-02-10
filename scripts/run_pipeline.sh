@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e   # Stopper à la première erreur
+set -e   # Stopper à la première erreu
 echo "=== Gametracker Pipeline ==="
 
 echo "[1/4] Attente de la base de données..."
